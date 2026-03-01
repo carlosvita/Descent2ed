@@ -61,4 +61,4 @@ The output goes to `docs/` and is ready for GitHub Pages.
 
 ## License
 
-MIT — Feel free to use, modify and share.
+MIT — Feel free to use, modify and share!
