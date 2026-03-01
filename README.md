@@ -28,9 +28,29 @@ Interactive map builder for **Descent: Journeys in the Dark (2nd Edition)**. Sel
 
 ## Publishing on GitHub Pages
 
-This project is pre-built and ready to deploy. The `docs/` folder contains all the static files.
+### 1. Add the tile images
 
-### Steps:
+Download the tile images from the [any2cards/d2e repo](https://github.com/any2cards/d2e/tree/master/images/map-tiles/d2e) and place the **subfolders** inside `docs/tiles/`:
+
+```
+docs/
+└── tiles/
+    ├── base-game/
+    │   ├── bg-01a.png
+    │   ├── bg-01b.png
+    │   └── ...
+    ├── lair-of-the-wyrm/
+    │   ├── lw-31a.png
+    │   └── ...
+    ├── labyrinth-of-ruin/
+    ├── the-trollfens/
+    ├── shadow-of-nerekhall/
+    ├── manor-of-ravens/
+    ├── mists-of-bilehall/
+    └── the-chains-that-rust/
+```
+
+### 2. Deploy
 
 1. Push this entire repo to GitHub
 2. Go to **Settings** → **Pages**

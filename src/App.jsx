@@ -1,14 +1,8 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import "./app.css";
 
-/* ─── Image URL fallback chain ─── */
-const SOURCES = [
-  (f, n) => `https://raw.githubusercontent.com/any2cards/d2e/master/images/map-tiles/d2e/${f}/${n}`,
-  (f, n) => `https://cdn.jsdelivr.net/gh/any2cards/d2e@master/images/map-tiles/d2e/${f}/${n}`,
-  (f, n) => `https://raw.githubusercontent.com/any2cards/d2e/65f2e0d/images/map-tiles/d2e/${f}/${n}`,
-];
-let srcIdx = 0;
-const imgUrl = (folder, file, i) => SOURCES[i ?? srcIdx](folder, file);
+/* ─── Image path (local, relative to index.html) ─── */
+const imgUrl = (folder, file) => `./tiles/${folder}/${file}`;
 
 /* ─── Tile data per expansion ─── */
 function numbered(prefix, folder, start, end) {
@@ -118,12 +112,11 @@ EXPANSIONS[0].tiles = EXPANSIONS[0].tiles.map(t => {
   return t;
 });
 
-/* ─── Smart image with fallback ─── */
+/* ─── Image component with loading state ─── */
 function Img({ folder, file, alt, className, style, onLoad: onLoadProp }) {
-  const [idx, setIdx] = useState(srcIdx);
   const [ok, setOk] = useState(false);
   const [fail, setFail] = useState(false);
-  const url = imgUrl(folder, file, idx);
+  const url = imgUrl(folder, file);
 
   if (fail) {
     return (
@@ -148,18 +141,9 @@ function Img({ folder, file, alt, className, style, onLoad: onLoadProp }) {
         className={className}
         onLoad={() => {
           setOk(true);
-          srcIdx = idx;
           onLoadProp?.();
         }}
-        onError={() => {
-          if (idx < SOURCES.length - 1) {
-            const n = idx + 1;
-            srcIdx = n;
-            setIdx(n);
-          } else {
-            setFail(true);
-          }
-        }}
+        onError={() => setFail(true)}
         style={{ ...style, display: ok ? (style?.display || "block") : "none" }}
       />
     </>
@@ -252,26 +236,8 @@ export default function App() {
   const uidRef = useRef(0);
   const [showHelp, setShowHelp] = useState(false);
   const [snap, setSnap] = useState(false);
-  const [status, setStatus] = useState("Loading images...");
+  const [status] = useState("Local tiles");
   const [sideCollapsed, setSideCollapsed] = useState(false);
-
-  /* Test image source on mount */
-  useEffect(() => {
-    const trySource = (i) => {
-      if (i >= SOURCES.length) {
-        setStatus("⚠ All image sources failed");
-        return;
-      }
-      const img = new Image();
-      img.onload = () => {
-        srcIdx = i;
-        setStatus(`✓ Connected (source ${i + 1})`);
-      };
-      img.onerror = () => trySource(i + 1);
-      img.src = imgUrl("base-game", "bg-01a.png", i);
-    };
-    trySource(0);
-  }, []);
 
   /* Add tile */
   const addTile = useCallback((exp, tile) => {
